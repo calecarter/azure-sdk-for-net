@@ -3,7 +3,6 @@
 
 using System.Threading.Tasks;
 using Azure.Core.TestFramework;
-using Azure.ResourceManager.Compute.Models;
 using Azure.ResourceManager.Compute.Tests.Helpers;
 using NUnit.Framework;
 
@@ -12,14 +11,14 @@ namespace Azure.ResourceManager.Compute.Tests
     public class DedicatedHostGroupOperationsTests : ComputeTestBase
     {
         public DedicatedHostGroupOperationsTests(bool isAsync)
-            : base(isAsync, RecordedTestMode.Record)
+            : base(isAsync)//, RecordedTestMode.Record)
         {
         }
 
         private async Task<DedicatedHostGroup> CreateDedicatedHostGroupAsync(string groupName)
         {
             var container = (await CreateResourceGroupAsync()).GetDedicatedHostGroups();
-            var input = DedicatedHostGroupHelper.GetBasicDedicatedHostGroup(DefaultLocation);
+            var input = ResourceDataHelper.GetBasicDedicatedHostGroup(DefaultLocation, 2);
             return await container.CreateOrUpdateAsync(groupName, input);
         }
 
@@ -28,8 +27,8 @@ namespace Azure.ResourceManager.Compute.Tests
         public async Task Delete()
         {
             var groupName = Recording.GenerateAssetName("testDHG-");
-            var DedicatedHostGroup = await CreateDedicatedHostGroupAsync(groupName);
-            await DedicatedHostGroup.DeleteAsync();
+            var dedicatedHostGroup = await CreateDedicatedHostGroupAsync(groupName);
+            await dedicatedHostGroup.DeleteAsync();
         }
 
         [TestCase]
@@ -37,8 +36,8 @@ namespace Azure.ResourceManager.Compute.Tests
         public async Task StartDelete()
         {
             var groupName = Recording.GenerateAssetName("testDHG-");
-            var DedicatedHostGroup = await CreateDedicatedHostGroupAsync(groupName);
-            var deleteOp = await DedicatedHostGroup.StartDeleteAsync();
+            var dedicatedHostGroup = await CreateDedicatedHostGroupAsync(groupName);
+            var deleteOp = await dedicatedHostGroup.StartDeleteAsync();
             await deleteOp.WaitForCompletionResponseAsync();
         }
 
@@ -50,7 +49,7 @@ namespace Azure.ResourceManager.Compute.Tests
             var group1 = await CreateDedicatedHostGroupAsync(groupName);
             DedicatedHostGroup group2 = await group1.GetAsync();
 
-            DedicatedHostGroupHelper.AssertGroup(group1.Data, group2.Data);
+            ResourceDataHelper.AssertGroup(group1.Data, group2.Data);
         }
     }
 }
