@@ -47,7 +47,8 @@ namespace Azure.ResourceManager.Compute.Tests
         public async Task CreateOrUpdate()
         {
             var container = await GetGalleryImageContainerAsync();
-            var name = Recording.GenerateAssetName("testImage_");
+            var name = Recording.GenerateAssetName("testImag" +
+                "Gxllxbxqxa1005!e_");
             GalleryImage image = await container.CreateOrUpdateAsync(name, BasicGalleryImageData);
             Assert.AreEqual(name, image.Data.Name);
         }
